@@ -1,0 +1,109 @@
+{
+  "boletim": {
+    "numero": "",
+    "data": "",
+    "titulo": ""
+  },
+  "estrutura": [
+    {
+      "id": "todas",
+      "label": "Todas as notas",
+      "parte": "",
+      "secao": "",
+      "subsecao": ""
+    },
+    {
+      "id": "parte-1",
+      "label": "1ª Parte - Serviços Diários",
+      "parte": "1ª Parte - Serviços Diários",
+      "secao": "",
+      "subsecao": ""
+    },
+    {
+      "id": "parte-2",
+      "label": "2ª Parte - Operações e Instrução",
+      "parte": "2ª Parte - Operações e Instrução",
+      "secao": "",
+      "subsecao": ""
+    },
+    {
+      "id": "parte-2-operacoes",
+      "label": "I - Operações",
+      "parte": "2ª Parte - Operações e Instrução",
+      "secao": "I - Operações",
+      "subsecao": ""
+    },
+    {
+      "id": "parte-2-instrucao",
+      "label": "II - Instrução",
+      "parte": "2ª Parte - Operações e Instrução",
+      "secao": "II - Instrução",
+      "subsecao": ""
+    },
+    {
+      "id": "parte-3",
+      "label": "3ª Parte - Assuntos Gerais e Administrativos",
+      "parte": "3ª Parte - Assuntos Gerais e Administrativos",
+      "secao": "",
+      "subsecao": ""
+    },
+    {
+      "id": "parte-3-gerais",
+      "label": "I - Assuntos Gerais",
+      "parte": "3ª Parte - Assuntos Gerais e Administrativos",
+      "secao": "I - Assuntos Gerais",
+      "subsecao": ""
+    },
+    {
+      "id": "oficiais",
+      "label": "A - Alterações de Oficiais",
+      "parte": "3ª Parte - Assuntos Gerais e Administrativos",
+      "secao": "I - Assuntos Gerais",
+      "subsecao": "A - Alterações De Oficiais"
+    },
+    {
+      "id": "pracas-especiais",
+      "label": "A1 - Alterações de Praças Especiais",
+      "parte": "3ª Parte - Assuntos Gerais e Administrativos",
+      "secao": "I - Assuntos Gerais",
+      "subsecao": "A1 - Alterações De Praças Especiais"
+    },
+    {
+      "id": "pracas",
+      "label": "B - Alterações de Praças",
+      "parte": "3ª Parte - Assuntos Gerais e Administrativos",
+      "secao": "I - Assuntos Gerais",
+      "subsecao": "B - Alterações De Praças"
+    },
+    {
+      "id": "civis",
+      "label": "C - Alterações de Civis",
+      "parte": "3ª Parte - Assuntos Gerais e Administrativos",
+      "secao": "I - Assuntos Gerais",
+      "subsecao": "C - Alterações De Civis"
+    },
+    {
+      "id": "parte-3-admin",
+      "label": "II - Assuntos Administrativos",
+      "parte": "3ª Parte - Assuntos Gerais e Administrativos",
+      "secao": "II - Assuntos Administrativos",
+      "subsecao": ""
+    },
+    {
+      "id": "parte-4",
+      "label": "4ª Parte - Justiça e Disciplina",
+      "parte": "4ª Parte - Justiça E Disciplina",
+      "secao": "",
+      "subsecao": ""
+    },
+    {
+      "id": "parte-5",
+      "label": "5ª Parte - Comunicação Social",
+      "parte": "5ª Parte - Comunicação Social",
+      "secao": "",
+      "subsecao": ""
+    }
+  ],
+  "notas": [],
+  "boletins": []
+}

@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal CBMERJ - Boletim Digital</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" crossorigin href="./assets/index-CSPQZHNu.css">
+</head>
+<body>
+
+  <div id="telaLogin" class="tela-login">
+    <form id="formLogin" class="card-login">
+      <div class="brasao-login">BD</div>
+      <h1>Portal CBMERJ</h1>
+      <p>Acesso ao Boletim Digital</p>
+
+      <label class="campo-login-email">
+        E-mail institucional
+        <input id="loginRg" type="email" autocomplete="username" placeholder="nome@dominio.mil.br" required>
+      </label>
+
+      <label>
+        Senha
+        <input id="loginSenha" type="password" autocomplete="current-password" placeholder="Digite sua senha" required>
+      </label>
+
+      <button type="submit">Entrar</button>
+
+      <div id="erroLogin" class="erro-login escondido">
+        E-mail ou senha inválidos.
+      </div>
+
+      <small>Acesso restrito a usuários previamente cadastrados.</small>
+    </form>
+  </div>
+
+  <div id="telaDefinirSenha" class="tela-login escondido">
+    <form id="formDefinirSenha" class="card-login">
+      <div class="brasao-login">BD</div>
+      <h1>Crie sua senha</h1>
+      <p>Conclua o convite para acessar o Boletim Digital.</p>
+
+      <label>
+        Nova senha
+        <input id="novaSenha" type="password" autocomplete="new-password" minlength="8" placeholder="Mínimo de 8 caracteres" required>
+      </label>
+
+      <label>
+        Confirme a senha
+        <input id="confirmarNovaSenha" type="password" autocomplete="new-password" minlength="8" placeholder="Digite novamente" required>
+      </label>
+
+      <button type="submit">Salvar senha e entrar</button>
+
+      <div id="erroDefinirSenha" class="erro-login escondido"></div>
+    </form>
+  </div>
+
+  <div id="app" class="app escondido">
+    <aside class="sidebar">
+      <div class="marca">
+        <div class="brasao">CB</div>
+        <div>
+          <h1>Boletim Digital</h1>
+          <p><strong>Último boletim incluído:</strong><br><span id="ultimoBoletimIncluido">Carregando...</span></p>
+          <div id="perfilUsuario" class="perfil-usuario"></div>
+        </div>
+      </div>
+
+      <div class="menu-grupo-titulo">Boletim</div>
+      <nav id="menuLateral" class="menu"></nav>
+      <div class="menu-rodape">
+        <div class="menu-grupo-titulo">Informações institucionais</div>
+        
+        
+      </div>
+
+      <div class="menu-rodape">
+        
+        <button id="btnFatosHistoricos" type="button">Fatos Históricos</button>
+        <button id="btnEstatistica" type="button">Estatística de Socorros Prestados</button>
+        <div id="tituloAdministracao" class="menu-grupo-titulo titulo-admin requer-administracao">Administração</div>
+        <button id="btnAuditoria" class="requer-auditoria" type="button">Auditoria</button>
+        <button id="btnEstruturaOrganizacional" class="requer-administracao" type="button">Estrutura Organizacional</button>
+        <button id="btnExportarNotas" class="requer-exportar-notas" type="button">Exportar Dados</button>
+        <button id="btnImportarNotas" class="requer-importar-notas" type="button">Importar Dados</button>
+        <input id="inputImportarNotas" class="input-importar-notas" type="file" accept=".json,application/json">
+      </div>
+    </aside>
+
+    <main class="principal">
+      <header class="cabecalho" id="cabecalhoPrincipalBoletim">
+        <div>
+          <p class="etiqueta">Portal CBMERJ</p>
+          <h2 id="tituloPagina">Boletim Digital</h2>
+          <p class="descricao">Todas as notas ficam reunidas aqui, das mais recentes para as mais antigas.</p>
+        </div>
+
+        <div class="acoes-topo">
+          <div class="busca">
+            <input id="campoBusca" type="search" placeholder="Buscar nome, RG, nota, texto..." />
+            <button id="btnLimpar">Limpar</button>
+          </div>
+
+          <div class="linha-botoes">
+            <button id="btnImprimir" class="btn-imprimir" type="button">Imprimir</button>
+            <button id="btnNovaNota" class="btn-nova-nota requer-incluir-nota" type="button">+ Incluir nota</button>
+
+            <div class="calendario-area">
+              <button id="btnCalendario" class="btn-calendario" type="button">Calendário de boletins</button>
+              <div id="painelCalendario" class="painel-calendario escondido">
+                <div class="calendario-cabecalho">
+                  <button id="mesAnterior" type="button">‹</button>
+                  <strong id="mesAnoCalendario"></strong>
+                  <button id="mesProximo" type="button">›</button>
+                </div>
+                <div class="dias-semana">
+                  <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
+                </div>
+                <div id="gradeCalendario" class="grade-calendario"></div>
+                <p class="legenda-calendario"><span></span> Dias com boletim incluído</p>
+              </div>
+            </div>
+
+            <button id="btnSair" class="btn-sair" type="button">Sair</button>
+          </div>
+        </div>
+      </header>
+
+      <section id="controlesNotas" class="ocultar-contador-notas-estatistica" class="controles-notas">
+        <div>
+          <strong id="filtroAtual">Todas as notas</strong>
+          <span id="contadorNotas" class="ocultar-contador-notas-estatistica"></span>
+        </div>
+
+        <label class="mostrar-qtd">
+          Mostrar
+          <select id="itensPorPagina" class="input-itens-por-pagina" class="ocultar-em-estatistica-input">
+            <option value="10">10</option>
+            <option value="20" selected>20</option>
+            <option value="30">30</option>
+          </select>
+          notas
+        </label>
+      </section>
+
+      <section id="listaNotas" class="lista-notas"></section>
+      <div id="paginacao" class="ocultar-em-estatistica" class="paginacao"></div>
+
+      <section id="areaImpressao" class="area-impressao"></section>
+
+      <section id="paginaFatosHistoricos" class="pagina-extra escondido">
+        <h2>Fatos Históricos</h2>
+        <p>Área própria para fatos históricos da Corporação. Este conteúdo não entra em “Todas as Notas”.</p>
+      </section>
+
+      <section id="paginaEstatistica" class="pagina-extra escondido">
+        <div class="estatistica-topo">
+          <div>
+            <h2>Estatística de Socorros Prestados</h2>
+            <p id="estatisticaSubtitulo">Dados consolidados dos socorros prestados.</p>
+          </div>
+
+          <button id="btnIncluirEstatistica" class="btn-nova-nota requer-incluir-nota" type="button" onclick="abrirModalEstatistica()">+ Incluir dados</button>
+        </div>
+
+        <div class="estatistica-controles" id="estatisticaControles">
+          <button class="btn-estatistica ativo" data-visao="diario" type="button">Total diário</button>
+          <button class="btn-estatistica" data-visao="mes" type="button">Total mensal</button>
+          <button class="btn-estatistica" data-visao="ano" type="button">Total anual</button>
+        </div>
+
+        <div class="estatistica-filtros">
+          <div id="filtroEstatisticaData" class="filtro-estatistica-periodo">
+            <label>Data de referência</label>
+            <button id="btnCalendarioReferenciaEstatistica" class="btn-calendario-impressao" type="button">Selecionar data</button>
+            <input type="hidden" id="estatisticaDataReferencia">
+
+            <div id="painelCalendarioReferenciaEstatistica" class="painel-calendario estatistica-calendario escondido">
+              <div class="calendario-cabecalho">
+                <button id="mesAnteriorReferenciaEstatistica" type="button">‹</button>
+                <strong id="mesAnoCalendarioReferenciaEstatistica"></strong>
+                <button id="mesProximoReferenciaEstatistica" type="button">›</button>
+              </div>
+              <div class="dias-semana">
+                <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
+              </div>
+              <div id="gradeCalendarioReferenciaEstatistica" class="grade-calendario"></div>
+              <p class="legenda-calendario"><span></span> Dias com dados inseridos</p>
+            </div>
+          </div>
+
+          <div id="filtroEstatisticaMes" class="filtro-estatistica-periodo filtro-mensal-estatistica escondido">
+            <label>
+              Ano de referência
+              <select id="estatisticaMesAnoReferencia" data-filtro-mensal="ano"></select>
+            </label>
+
+            <label>
+              Mês de referência
+              <select id="estatisticaMesMesReferencia" data-filtro-mensal="mes"></select>
+            </label>
+          </div>
+
+          <label id="filtroEstatisticaAno" class="filtro-estatistica-periodo escondido">
+            Ano de referência
+            <select id="estatisticaAnoReferencia"></select>
+          </label>
+        </div>
+
+        <div id="estatisticaResumo" class="estatistica-resumo"></div>
+        <div id="estatisticaGrid" class="estatistica-grid"></div>
+
+        <div class="estatistica-notas">
+          <p><strong>Observação:</strong> as médias desconsideram o índice de trotes, seguindo o critério usado no boletim.</p>
+        </div>
+      </section>
+
+
+
+    
+
+      
+
+
+
+      <div id="paginaEstruturaOrganizacional" class="pagina-extra pagina-estrutura-organizacional-v173 escondido"></div>
+
+<section id="paginaAuditoria" class="pagina-extra escondido">
+        <h2>Auditoria</h2>
+        <div class="auditoria-controles">
+          <label>
+            Usuário
+            <select id="filtroAuditoriaUsuario">
+              <option value="">Todos</option>
+            </select>
+          </label>
+
+          <label>
+            Tipo de ação
+            <select id="filtroAuditoriaAcao">
+              <option value="">Todas</option>
+            </select>
+          </label>
+
+          <button id="btnLimparFiltrosAuditoria" type="button" class="btn-secundario">Limpar filtros</button>
+          <button id="btnExportarAuditoriaPdf" type="button" class="btn-principal requer-auditoria">Exportar auditoria em PDF</button>
+        </div>
+
+        <div id="tabelaAuditoria"></div>
+      </section>
+    </main>
+
+    <div id="modalNota" class="modal escondido">
+      <div class="modal-conteudo">
+        <div class="modal-cabecalho">
+          <h2>Incluir nova nota</h2>
+          <button id="btnFecharModal" type="button">×</button>
+        </div>
+
+        <form id="formNota" class="form-nota">
+          <div class="linha-form">
+            <label>Número da nota<input type="text" id="notaNumero" placeholder="Ex.: 1" required></label>
+            <label>Data<input type="date" id="notaData" required></label>
+          </div>
+
+          <label>Título<input type="text" id="notaTitulo" placeholder="Título da nota" required></label>
+
+          <label>Parte
+            <select id="notaParte" required>
+              <option value="">Selecione...</option>
+              <option>1ª Parte - Serviços Diários</option>
+              <option>2ª Parte - Operações e Instrução</option>
+              <option>3ª Parte - Assuntos Gerais e Administrativos</option>
+              <option>4ª Parte - Justiça e Disciplina</option>
+              <option>5ª Parte - Comunicação Social</option>
+            </select>
+          </label>
+
+          <label id="campoSecao" class="escondido">Seção
+            <select id="notaSecao">
+              <option value="">Selecione...</option>
+            </select>
+          </label>
+
+          <label id="campoSubsecao" class="escondido">Subseção
+            <select id="notaSubsecao">
+              <option value="">Selecione...</option>
+              <option>A - Alterações de Oficiais</option>
+              <option>A1 - Alterações de Praças Especiais</option>
+              <option>B - Alterações de Praças</option>
+              <option>C - Alterações de Civis</option>
+            </select>
+          </label>
+
+          <label>Boletim<input type="text" id="notaBoletim" placeholder="Ex.: Boletim da SEDEC/CBMERJ nº 069"></label>
+          <div id="blocoBoletimEstruturadoV164" class="boletim-estruturado-v164">
+            <label>Tipo de boletim
+              <select id="notaBoletimTipo">
+                <option value="SEDEC">SEDEC/CBMERJ</option>
+                <option value="CBA">CBA</option>
+                <option value="OBM">OBM</option>
+              </select>
+            </label>
+            <label id="grupoNotaBoletimCba" class="escondido">CBA<select id="notaBoletimCba"></select></label>
+            <label id="grupoNotaBoletimObm" class="escondido campo-obm-autocomplete-v164">OBM
+              <input id="notaBoletimObmBusca" type="text" placeholder="Digite a OBM, número, bairro ou apelido">
+              <div id="sugestoesNotaBoletimObm" class="sugestoes-obm-v164 escondido"></div>
+            </label>
+            <label>Número do boletim<input id="notaBoletimNumero" type="text" placeholder="Ex.: 76" required></label>
+          </div>
+
+
+          <label>Texto</label>
+          <div class="editor">
+            <div class="barra-editor">
+              <button type="button" data-cmd="formatBlock" data-value="p">Texto</button>
+              <button type="button" data-cmd="formatBlock" data-value="h2">Título 2</button>
+              <button type="button" data-cmd="formatBlock" data-value="h3">Título 3</button>
+              <button type="button" data-cmd="bold"><b>N</b></button>
+              <button type="button" data-cmd="italic"><i>I</i></button>
+              <button type="button" data-cmd="underline"><u>S</u></button>
+              <button type="button" id="btnInserirTab">Tab/Recuo</button>
+              <button type="button" id="btnInserirTabela">Tabela</button>
+            </div>
+            <div id="notaTextoEditor" class="editor-area" contenteditable="true" data-placeholder="Cole ou digite o texto da nota..."></div>
+          </div>
+
+          <fieldset class="campo-anexos">
+            <legend>Anexos</legend>
+            <div id="listaCamposAnexos"></div>
+            <button id="btnAdicionarAnexo" type="button" class="btn-secundario">+ Adicionar anexo</button>
+            <p class="ajuda">O anexo ficará expansível/recolhível dentro da nota.</p>
+          </fieldset>
+
+          <div class="acoes-form">
+            <button type="button" id="btnCancelarNota" class="btn-secundario">Cancelar</button>
+            <button type="submit" class="btn-principal">Incluir nota</button>
+          </div>
+
+          <div class="aviso-local">
+            <strong>Importante:</strong> nesta versão estática, a nota aparece na página e fica salva no navegador deste computador. Em produção, isso deve ser gravado em servidor/banco de dados.
+          </div>
+          <div class="aviso-admin">
+            <strong>Administração:</strong> usuários administradores podem editar ou excluir notas. O acesso exige uma conta cadastrada e um perfil ativo.
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+    <div id="modalTabela" class="modal-tabela escondido">
+      <div class="modal-tabela-conteudo">
+        <div class="modal-tabela-cabecalho">
+          <h3>Inserir tabela</h3>
+          <button id="btnFecharTabela" type="button">×</button>
+        </div>
+
+        <div class="form-tabela">
+          <label>
+            Modelo da tabela
+            <select id="tipoTabela">
+              <option value="simples">Tabela simples</option>
+              <option value="cabecalho">Tabela com cabeçalho</option>
+              <option value="compacta">Tabela compacta</option>
+              <option value="converter">Converter texto em tabela</option>
+            </select>
+          </label>
+
+          <div id="opcoesTabelaNormal">
+            <div class="linha-form">
+              <label>Linhas<input type="number" id="tabelaLinhas" min="1" value="3"></label>
+              <label>Colunas<input type="number" id="tabelaColunas" min="1" value="3"></label>
+            </div>
+
+            <label>
+              Alinhamento do texto
+              <select id="tabelaAlinhamento">
+                <option value="left">Esquerda</option>
+                <option value="center" selected>Centro</option>
+                <option value="justify">Justificado</option>
+              </select>
+            </label>
+
+            <label>
+              Largura
+              <select id="tabelaLargura">
+                <option value="100">Largura total</option>
+                <option value="auto">Compacta/automática</option>
+              </select>
+            </label>
+          </div>
+
+          <div id="opcoesConverterTabela" class="escondido">
+            <label>
+              Cole o texto separado por TAB, ponto e vírgula ou múltiplos espaços
+              <textarea id="textoConverterTabela" rows="8" placeholder="Ex.: Nome&#9;RG&#9;Função&#10;João&#9;12345&#9;Motorista"></textarea>
+            </label>
+
+            <label>
+              Separador
+              <select id="separadorTabela">
+                <option value="auto">Detectar automaticamente</option>
+                <option value="tab">TAB</option>
+                <option value="semicolon">Ponto e vírgula ;</option>
+                <option value="spaces">Múltiplos espaços</option>
+              </select>
+            </label>
+
+            <label>
+              Largura
+              <select id="converterTabelaLargura">
+                <option value="100">Largura total</option>
+                <option value="auto">Compacta/automática</option>
+              </select>
+            </label>
+
+            <label class="checkbox-linha">
+              <input type="checkbox" id="converterPrimeiraLinhaCabecalho" checked>
+              Usar primeira linha como cabeçalho
+            </label>
+          </div>
+
+          <div class="acoes-form">
+            <button type="button" id="btnCancelarTabela" class="btn-secundario">Cancelar</button>
+            <button type="button" id="btnInserirTabelaConfirmar" class="btn-principal">Inserir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div id="modalImpressao" class="modal-impressao escondido">
+      <div class="modal-impressao-conteudo">
+        <div class="modal-impressao-cabecalho">
+          <h3>Imprimir</h3>
+          <button id="btnFecharImpressao" type="button">×</button>
+        </div>
+
+        <div class="form-impressao">
+          <label>
+            O que deseja imprimir?
+            <select id="tipoImpressao">
+              <option value="busca">Resultado atual / busca atual</option>
+              <option value="boletim">Boletim de um dia específico</option>
+              <option value="quantidade">Quantidade de notas mais recentes</option>
+            </select>
+          </label>
+
+          <div id="campoDataImpressao" class="campo-data-impressao escondido">
+            <label>Data do boletim</label>
+            <button id="btnCalendarioImpressao" class="btn-calendario-impressao" type="button">
+              Selecionar data
+            </button>
+            <input type="hidden" id="dataImpressao">
+
+            <div id="painelCalendarioImpressao" class="painel-calendario impressao-calendario escondido">
+              <div class="calendario-cabecalho">
+                <button id="mesAnteriorImpressao" type="button">‹</button>
+                <strong id="mesAnoCalendarioImpressao"></strong>
+                <button id="mesProximoImpressao" type="button">›</button>
+              </div>
+              <div class="dias-semana">
+                <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
+              </div>
+              <div id="gradeCalendarioImpressao" class="grade-calendario"></div>
+              <p class="legenda-calendario"><span></span> Dias com boletim incluído</p>
+            </div>
+          </div>
+
+          <label id="campoQuantidadeImpressao" class="escondido">
+            Quantidade de notas
+            <input type="number" id="quantidadeImpressao" min="1" value="20">
+          </label>
+
+          <div class="aviso-local">
+            Se houver uma busca ativa, a impressão respeitará o termo pesquisado. A ordem será sempre da mais nova para a mais antiga.
+          </div>
+
+          <div class="acoes-form">
+            <button type="button" id="btnCancelarImpressao" class="btn-secundario">Cancelar</button>
+            <button type="button" id="btnConfirmarImpressao" class="btn-principal">Imprimir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div id="modalEstatistica" class="modal escondido">
+      <div class="modal-conteudo estatistica-modal-conteudo">
+        <div class="modal-cabecalho">
+          <h2>Incluir dados estatísticos</h2>
+          <button id="btnFecharModalEstatistica" type="button">×</button>
+        </div>
+
+        <form id="formEstatistica" class="form-nota">
+          <div class="campo-data-estatistica">
+            <label>Data da estatística</label>
+            <button id="btnCalendarioEstatistica" class="btn-calendario-impressao" type="button">Selecionar data</button>
+            <input type="hidden" id="estatisticaData" required>
+
+            <div id="painelCalendarioEstatistica" class="painel-calendario estatistica-calendario escondido">
+              <div class="calendario-cabecalho">
+                <button id="mesAnteriorEstatistica" type="button">‹</button>
+                <strong id="mesAnoCalendarioEstatistica"></strong>
+                <button id="mesProximoEstatistica" type="button">›</button>
+              </div>
+              <div class="dias-semana">
+                <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
+              </div>
+              <div id="gradeCalendarioEstatistica" class="grade-calendario"></div>
+              <p class="legenda-calendario"><span></span> Dias com dados já inseridos</p>
+            </div>
+
+            <div id="avisoEstatisticaExistente" class="aviso-estatistica-existente escondido">
+              <strong>⚠️ Esta data já possui dados inseridos.</strong>
+              <span>Os valores foram carregados no formulário. Ao salvar, os dados anteriores desta data serão substituídos.</span>
+            </div>
+          </div>
+
+          <div id="camposCategoriasEstatistica" class="campos-estatistica"></div>
+
+          <div class="acoes-form">
+            <button type="button" id="btnCancelarEstatistica" class="btn-secundario">Cancelar</button>
+            <button type="submit" class="btn-principal">Incluir dados</button>
+          </div>
+
+          <div class="aviso-local">
+            <strong>Importante:</strong> nesta versão, os dados estatísticos ficam salvos no navegador. Depois podemos incluir exportação/importação junto dos demais dados do sistema.
+          </div>
+        </form>
+      </div>
+    </div>
+
+  <script src="vendor/supabase-2.118.0.js"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/00-state.js"></script>
+  <script src="js/01-util.js"></script>
+  <script src="js/02-auth.js"></script>
+  <script src="js/03-auditoria.js"></script>
+  <script src="js/04-storage.js"></script>
+  <script src="js/04-supabase-storage.js"></script>
+  <script src="js/05-notas.js"></script>
+  <script src="js/06-editor.js"></script>
+  <script src="js/07-calendario-notas.js"></script>
+  <script src="js/08-estatisticas.js"></script>
+  <script src="js/09-impressao.js"></script>
+  <script src="js/98-legacy.js"></script>
+  <script src="js/164-estrutura-organizacional.js"></script>
+  <script src="js/99-app.js"></script>
+  <script src="js/107-ordem-insercao-notas.js"></script>
+  <script src="js/108-ordenar-boletins-atual.js"></script>
+  <script src="js/111-filtro-alteracao-pracas.js"></script>
+  <script src="js/112-filtros-menu-lateral.js"></script>
+  <script src="js/113-fechar-calendario-boletins.js"></script>
+  <script src="js/114-fechar-calendario-boletins-real.js"></script>
+  <script src="js/115-calendario-boletins-primeira-abertura.js"></script>
+  <script src="js/128-calendario-impressao-dias.js"></script>
+  <script src="js/129-selecionar-data-impressao.js"></script>
+  <script src="js/130-impressao-ordem-menu.js"></script>
+  <script src="js/131-ordenacao-data-inclusao.js"></script>
+  <script src="js/132-calendario-boletins-ano-mes-dia.js"></script>
+  <script src="js/133-calendario-boletins-refinado.js"></script>
+  <script src="js/134-ajuste-anos-calendario.js"></script>
+  <script src="js/135-corrigir-grade-calendario.js"></script>
+  <script src="js/137-botao-todas-notas.js"></script>
+  <script src="js/142-listas-e-alinhar-direita.js"></script>
+  <script src="js/151-data-referencia-design.js"></script>
+  <script src="js/157-calendario-referencia-avancado.js"></script>
+  <script src="js/159-favoritos-notas.js"></script>
+  <script src="js/160-favoritos-por-usuario.js"></script>
+  <script src="js/161-favoritos-individuais.js"></script>
+  <script src="js/162-favoritos-rg-chave-unica.js"></script>
+  <script src="js/163-corrigir-favorito-nota-errada.js"></script>
+  <script src="js/165-corrigir-login-rg.js"></script>
+  <script src="js/166-estrutura-botao-admin.js"></script>
+  <script src="js/167-exibir-botao-estrutura.js"></script>
+  <script src="js/168-ajuste-estrutura-organizacional.js"></script>
+  <script src="js/172-estrutura-funcional.js"></script>
+  <script src="js/173-isolar-estrutura-organizacional.js"></script>
+  <script src="js/174-corrigir-saida-estrutura.js"></script>
+  <script src="js/175-ocultar-campo-boletim-legado.js"></script>
+  <script src="js/176-corrigir-tipo-boletim-cba.js"></script>
+  <script src="js/177-corrigir-autocomplete-obm-nota.js"></script>
+  <script src="js/178-corrigir-submit-nova-nota.js"></script>
+  <script src="js/179-corrigir-numero-boletim-e-ordem.js"></script>
+  <script src="js/180-boletim-numero-ordem-definitivo.js"></script>
+  <script src="js/181-validar-campos-obrigatorios-nota.js"></script>
+  <script src="js/182-corrigir-duplicata-numero-e-boletim.js"></script>
+  <script src="js/183-corrigir-erro-duplicata-nota.js"></script>
+  <script src="js/184-ordenacao-data-inclusao.js"></script>
+  <script src="js/185-persistir-boletim-numero-e-ordem.js"></script>
+  <script src="js/186-ordem-topo-e-popup-duplicata.js"></script>
+  <script src="js/187-corrigir-popup-duplicata-editavel.js"></script>
+  <script src="js/188-editar-obms-desenvolvedor.js"></script>
+  <script src="js/189-corrigir-edicao-obm-sem-duplicar.js"></script>
+  <script src="js/190-corrigir-filtro-favoritos.js"></script>
+  <script src="js/191-favoritos-render-direto.js"></script>
+  <script src="js/192-favoritos-por-id-definitivo.js"></script>
+  <script src="js/193-favoritos-compatibilidade-total.js"></script>
+  <script src="js/194-favoritos-controles-limpos.js"></script>
+  <script src="js/195-indicadores-rg-anexo-notas.js"></script>
+  <script src="js/196-reposicionar-indicadores-notas.js"></script>
+  <script src="js/197-permitir-assuntos-gerais-sem-subsecao.js"></script>
+  <script src="js/198-cabecalho-institucional-impressao.js"></script>
+  <script src="js/199-cabecalho-modelo-boletim-completo.js"></script>
+  <script src="js/200-corrigir-cabecalho-boletim-dia.js"></script>
+  <script src="js/201-cabecalho-paginado-boletim.js"></script>
+  <script src="js/202-cabecalho-imagem-exata.js"></script>
+  <script src="js/208-limpeza-segura-impressao.js"></script>
+  <script src="js/209-corrigir-espaco-topo-fl1.js"></script>
+  <script src="js/211-ajustar-corpo-impressao-boletim.js"></script>
+  <script src="js/212-corrigir-texto-notas-impressao.js"></script>
+  <script src="js/213-boletim-reservado-oficiais.js"></script>
+  <script src="js/214-todas-notas-inicial-e-logo.js"></script>
+  <script src="js/215-modal-nota-responsivo.js"></script>
+  <script src="js/216-corrigir-texto-modal-baixa-resolucao.js"></script>
+  <script src="js/217-supabase-compatibilidade.js"></script>
+</body>
+</html>
