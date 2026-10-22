@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Portal CBMERJ - Boletim Digital</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" crossorigin href="./assets/index-CSPQZHNu.css">
+  <link rel="stylesheet" crossorigin href="./assets/index-B9WuWkdw.css">
 </head>
 <body>
 
@@ -82,6 +82,7 @@
         <button id="btnEstatistica" type="button">Estatística de Socorros Prestados</button>
         <div id="tituloAdministracao" class="menu-grupo-titulo titulo-admin requer-administracao">Administração</div>
         <button id="btnAuditoria" class="requer-auditoria" type="button">Auditoria</button>
+        <button id="btnUsuarios" class="requer-gerenciar-usuarios" type="button">Gerenciar usuários</button>
         <button id="btnEstruturaOrganizacional" class="requer-administracao" type="button">Estrutura Organizacional</button>
         <button id="btnExportarNotas" class="requer-exportar-notas" type="button">Exportar Dados</button>
         <button id="btnImportarNotas" class="requer-importar-notas" type="button">Importar Dados</button>
@@ -249,6 +250,62 @@
         </div>
 
         <div id="tabelaAuditoria"></div>
+      </section>
+
+      <section id="paginaUsuarios" class="pagina-extra pagina-usuarios escondido">
+        <div class="pagina-extra-topo usuarios-topo">
+          <div>
+            <h2>Gerenciar usuários</h2>
+            <p>Convide pessoas e controle o perfil e a situação de acesso ao Boletim Digital.</p>
+          </div>
+          <button id="btnAtualizarUsuarios" type="button" class="btn-secundario">Atualizar lista</button>
+        </div>
+
+        <div id="mensagemUsuarios" class="usuarios-mensagem escondido" role="status" aria-live="polite"></div>
+
+        <div class="usuarios-layout">
+          <form id="formConvidarUsuario" class="usuarios-card usuarios-form">
+            <h3>Convidar usuário</h3>
+            <p>A pessoa receberá um e-mail para cadastrar a própria senha.</p>
+
+            <label>
+              Nome
+              <input id="conviteUsuarioNome" name="nome" type="text" maxlength="120" autocomplete="name" placeholder="Nome da pessoa">
+            </label>
+
+            <label>
+              E-mail
+              <input id="conviteUsuarioEmail" name="email" type="email" maxlength="254" autocomplete="email" placeholder="usuario@exemplo.com" required>
+            </label>
+
+            <label>
+              Perfil de acesso
+              <select id="conviteUsuarioPerfil" name="perfil" required>
+                <option value="usuario-comum">Usuário comum</option>
+                <option value="editor">Editor</option>
+                <option value="auditor">Auditor</option>
+                <option value="administrador">Administrador</option>
+              </select>
+            </label>
+
+            <button id="btnConvidarUsuario" type="submit" class="btn-principal">Enviar convite</button>
+          </form>
+
+          <div class="usuarios-card usuarios-lista-card">
+            <div class="usuarios-lista-topo">
+              <div>
+                <h3>Usuários cadastrados</h3>
+                <p id="resumoUsuarios">Carregando...</p>
+              </div>
+              <label class="usuarios-busca">
+                Buscar
+                <input id="buscaUsuarios" type="search" placeholder="Nome ou e-mail">
+              </label>
+            </div>
+
+            <div id="listaUsuarios" class="usuarios-lista" aria-live="polite"></div>
+          </div>
+        </div>
       </section>
     </main>
 
@@ -619,5 +676,6 @@
   <script src="js/215-modal-nota-responsivo.js"></script>
   <script src="js/216-corrigir-texto-modal-baixa-resolucao.js"></script>
   <script src="js/217-supabase-compatibilidade.js"></script>
+  <script src="js/218-admin-usuarios.js"></script>
 </body>
 </html>

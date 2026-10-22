@@ -75,6 +75,7 @@ function mostrarBoletim() {
   document.getElementById("paginaEstatistica").classList.add("escondido");
   document.getElementById("paginaAuditoria")?.classList.add("escondido");
   document.getElementById("paginaEstruturaOrganizacional")?.classList.add("escondido");
+  document.getElementById("paginaUsuarios")?.classList.add("escondido");
   setTimeout(aplicarOcultacaoContadorNotasNaEstatistica, 0);
 }
 
@@ -91,6 +92,7 @@ function mostrarPaginaExtra(tipo) {
   document.getElementById("paginaFatosHistoricos").classList.toggle("escondido", tipo !== "fatos");
   document.getElementById("paginaEstatistica").classList.toggle("escondido", tipo !== "estatistica");
   document.getElementById("paginaAuditoria")?.classList.add("escondido");
+  document.getElementById("paginaUsuarios")?.classList.add("escondido");
   document.getElementById("tituloPagina").textContent = tipo === "fatos" ? "Fatos Históricos" : "Estatística de Socorros Prestados";
   if (tipo === "estatistica") renderizarEstatistica();
 }
@@ -429,6 +431,7 @@ function mostrarBoletim() {
   document.getElementById("paginaFatos")?.classList.add("escondido");
   document.getElementById("paginaEstatistica")?.classList.add("escondido");
   document.getElementById("paginaAuditoria")?.classList.add("escondido");
+  document.getElementById("paginaUsuarios")?.classList.add("escondido");
 }
 
 function mostrarPaginaExtra(tipo) {
@@ -440,6 +443,7 @@ function mostrarPaginaExtra(tipo) {
   document.getElementById("paginaFatos")?.classList.toggle("escondido", tipo !== "fatos");
   document.getElementById("paginaEstatistica")?.classList.toggle("escondido", tipo !== "estatistica");
   document.getElementById("paginaAuditoria")?.classList.add("escondido");
+  document.getElementById("paginaUsuarios")?.classList.add("escondido");
 
   const titulo = document.getElementById("tituloPagina");
   if (titulo) {

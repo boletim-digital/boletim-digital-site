@@ -38,6 +38,10 @@ function podeVerAdministracao() {
   return podeVerAuditoria() || podeExportarNotas() || podeImportarNotas();
 }
 
+function podeGerenciarUsuarios() {
+  return ["desenvolvedor", "administrador"].includes(perfilAtual());
+}
+
 function podeEditarOuExcluirNota() {
   return ["desenvolvedor", "administrador", "editor"].includes(perfilAtual());
 }
@@ -70,6 +74,7 @@ function aplicarPermissoes() {
     "permite-auditoria",
     "permite-exportar-notas",
     "permite-importar-notas",
+    "permite-gerenciar-usuarios",
     "permite-administracao",
     "admin"
   );
@@ -79,6 +84,7 @@ function aplicarPermissoes() {
   if (podeVerAuditoria()) document.body.classList.add("permite-auditoria");
   if (podeExportarNotas()) document.body.classList.add("permite-exportar-notas");
   if (podeImportarNotas()) document.body.classList.add("permite-importar-notas");
+  if (podeGerenciarUsuarios()) document.body.classList.add("permite-gerenciar-usuarios");
   if (podeVerAdministracao()) document.body.classList.add("permite-administracao");
   if (podeEditarOuExcluirNota()) document.body.classList.add("admin");
 
