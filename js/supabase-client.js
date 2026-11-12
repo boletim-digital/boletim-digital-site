@@ -1,6 +1,7 @@
 (function inicializarClienteSupabase() {
   const parametrosRetorno = new URLSearchParams(window.location.hash.replace(/^#/, ""));
   const tipoRetorno = parametrosRetorno.get("type");
+  window.boletimRetornoAuthTipo = tipoRetorno || "";
   window.boletimConvitePendente = ["invite", "recovery"].includes(tipoRetorno);
 
   const config = window.BOLETIM_CONFIG || {};

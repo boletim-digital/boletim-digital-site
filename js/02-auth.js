@@ -108,21 +108,44 @@ function mostrarMensagemLogin(mensagem = "", visivel = true) {
 
 function mostrarLogin() {
   document.getElementById("telaLogin")?.classList.remove("escondido");
+  document.getElementById("telaRecuperarSenha")?.classList.add("escondido");
   document.getElementById("telaDefinirSenha")?.classList.add("escondido");
   document.getElementById("app")?.classList.add("escondido");
 }
 
 function mostrarApp() {
   document.getElementById("telaLogin")?.classList.add("escondido");
+  document.getElementById("telaRecuperarSenha")?.classList.add("escondido");
   document.getElementById("telaDefinirSenha")?.classList.add("escondido");
   document.getElementById("app")?.classList.remove("escondido");
   aplicarPermissoes();
 }
 
-function mostrarDefinicaoSenha() {
+function mostrarRecuperacaoSenha() {
+  const emailLogin = document.getElementById("loginRg")?.value.trim() || "";
   document.getElementById("telaLogin")?.classList.add("escondido");
+  document.getElementById("telaRecuperarSenha")?.classList.remove("escondido");
+  document.getElementById("telaDefinirSenha")?.classList.add("escondido");
+  document.getElementById("app")?.classList.add("escondido");
+  const campoEmail = document.getElementById("emailRecuperacao");
+  if (campoEmail && emailLogin && !campoEmail.value) campoEmail.value = emailLogin;
+  campoEmail?.focus();
+}
+
+function mostrarDefinicaoSenha() {
+  const recuperacao = window.boletimRetornoAuthTipo === "recovery";
+  document.getElementById("telaLogin")?.classList.add("escondido");
+  document.getElementById("telaRecuperarSenha")?.classList.add("escondido");
   document.getElementById("telaDefinirSenha")?.classList.remove("escondido");
   document.getElementById("app")?.classList.add("escondido");
+  const titulo = document.getElementById("tituloDefinirSenha");
+  const texto = document.getElementById("textoDefinirSenha");
+  const botao = document.getElementById("btnSalvarNovaSenha");
+  if (titulo) titulo.textContent = recuperacao ? "Crie uma nova senha" : "Crie sua senha";
+  if (texto) texto.textContent = recuperacao
+    ? "Defina a nova senha da sua conta no Boletim Digital."
+    : "Conclua o convite para acessar o Boletim Digital.";
+  if (botao) botao.textContent = recuperacao ? "Atualizar senha e entrar" : "Salvar senha e entrar";
   document.getElementById("novaSenha")?.focus();
 }
 
@@ -131,6 +154,14 @@ function mostrarMensagemDefinicaoSenha(mensagem = "", visivel = true) {
   if (!erro) return;
   erro.textContent = mensagem || "Não foi possível salvar a senha.";
   erro.classList.toggle("escondido", !visivel);
+}
+
+function mostrarMensagemRecuperacao(mensagem = "", sucesso = false) {
+  const caixa = document.getElementById("mensagemRecuperacao");
+  if (!caixa) return;
+  caixa.textContent = mensagem;
+  caixa.classList.toggle("escondido", !mensagem);
+  caixa.classList.toggle("sucesso", Boolean(mensagem && sucesso));
 }
 
 function limparSessaoLocal() {
@@ -217,6 +248,43 @@ async function fazerLogin(event) {
   }
 }
 
+async function solicitarRecuperacaoSenha(event) {
+  event?.preventDefault?.();
+
+  const cliente = clienteSupabase();
+  const email = document.getElementById("emailRecuperacao")?.value.trim().toLocaleLowerCase() || "";
+  const botao = document.getElementById("btnEnviarRecuperacao");
+
+  mostrarMensagemRecuperacao("");
+  if (!cliente) {
+    mostrarMensagemRecuperacao("Não foi possível conectar ao serviço de autenticação.");
+    return false;
+  }
+  if (!email) {
+    mostrarMensagemRecuperacao("Informe o e-mail da sua conta.");
+    return false;
+  }
+
+  if (botao) botao.disabled = true;
+  try {
+    const { error } = await cliente.auth.resetPasswordForEmail(email, {
+      redirectTo: "https://boletim-digital.github.io/boletim-digital-site/"
+    });
+    if (error) throw error;
+    mostrarMensagemRecuperacao(
+      "Se esse e-mail estiver cadastrado, você receberá um link para criar uma nova senha. Verifique também a caixa de spam.",
+      true
+    );
+    return true;
+  } catch (erro) {
+    mostrarMensagemRecuperacao("Não foi possível enviar o link agora. Aguarde alguns minutos e tente novamente.");
+    console.error("Falha ao solicitar recuperação de senha:", erro);
+    return false;
+  } finally {
+    if (botao) botao.disabled = false;
+  }
+}
+
 async function definirSenhaDoConvite(event) {
   event?.preventDefault?.();
 
@@ -250,6 +318,7 @@ async function definirSenhaDoConvite(event) {
     if (!data.user) throw new Error("O usuário do convite não foi encontrado.");
 
     window.boletimConvitePendente = false;
+    window.boletimRetornoAuthTipo = "";
     history.replaceState({}, document.title, `${window.location.pathname}${window.location.search}`);
     await carregarPerfilAutenticado(data.user);
     mostrarApp();
@@ -348,12 +417,33 @@ async function inicializarAutenticacaoSupabase() {
 
 function configurarLoginRobusto() {
   const formLogin = document.getElementById("formLogin");
+  const formRecuperarSenha = document.getElementById("formRecuperarSenha");
   const formDefinirSenha = document.getElementById("formDefinirSenha");
+  const btnEsqueciSenha = document.getElementById("btnEsqueciSenha");
+  const btnVoltarLogin = document.getElementById("btnVoltarLogin");
   const btnSair = document.getElementById("btnSair");
 
   if (formLogin && formLogin.dataset.authSupabase !== "1") {
     formLogin.dataset.authSupabase = "1";
     formLogin.addEventListener("submit", event => void fazerLogin(event));
+  }
+
+  if (formRecuperarSenha && formRecuperarSenha.dataset.authSupabase !== "1") {
+    formRecuperarSenha.dataset.authSupabase = "1";
+    formRecuperarSenha.addEventListener("submit", event => void solicitarRecuperacaoSenha(event));
+  }
+
+  if (btnEsqueciSenha && btnEsqueciSenha.dataset.authSupabase !== "1") {
+    btnEsqueciSenha.dataset.authSupabase = "1";
+    btnEsqueciSenha.addEventListener("click", mostrarRecuperacaoSenha);
+  }
+
+  if (btnVoltarLogin && btnVoltarLogin.dataset.authSupabase !== "1") {
+    btnVoltarLogin.dataset.authSupabase = "1";
+    btnVoltarLogin.addEventListener("click", () => {
+      mostrarMensagemRecuperacao("");
+      mostrarLogin();
+    });
   }
 
   if (formDefinirSenha && formDefinirSenha.dataset.authSupabase !== "1") {

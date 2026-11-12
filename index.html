@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Portal CBMERJ - Boletim Digital</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" crossorigin href="./assets/index-B9WuWkdw.css">
+  <link rel="stylesheet" crossorigin href="./assets/index-Bb93Xt2E.css">
 </head>
 <body>
 
@@ -27,6 +27,8 @@
 
       <button type="submit">Entrar</button>
 
+      <button id="btnEsqueciSenha" class="btn-link-login" type="button">Esqueci minha senha</button>
+
       <div id="erroLogin" class="erro-login escondido">
         E-mail ou senha inválidos.
       </div>
@@ -35,11 +37,29 @@
     </form>
   </div>
 
+  <div id="telaRecuperarSenha" class="tela-login escondido">
+    <form id="formRecuperarSenha" class="card-login">
+      <div class="brasao-login">BD</div>
+      <h1>Recuperar senha</h1>
+      <p>Informe o e-mail usado no Boletim Digital. Enviaremos um link seguro para você criar uma nova senha.</p>
+
+      <label>
+        E-mail
+        <input id="emailRecuperacao" type="email" autocomplete="email" placeholder="seuemail@exemplo.com" required>
+      </label>
+
+      <button id="btnEnviarRecuperacao" type="submit">Enviar link de recuperação</button>
+      <button id="btnVoltarLogin" class="btn-link-login" type="button">Voltar para o login</button>
+
+      <div id="mensagemRecuperacao" class="erro-login escondido" role="status" aria-live="polite"></div>
+    </form>
+  </div>
+
   <div id="telaDefinirSenha" class="tela-login escondido">
     <form id="formDefinirSenha" class="card-login">
       <div class="brasao-login">BD</div>
-      <h1>Crie sua senha</h1>
-      <p>Conclua o convite para acessar o Boletim Digital.</p>
+      <h1 id="tituloDefinirSenha">Crie sua senha</h1>
+      <p id="textoDefinirSenha">Conclua o convite para acessar o Boletim Digital.</p>
 
       <label>
         Nova senha
@@ -51,7 +71,7 @@
         <input id="confirmarNovaSenha" type="password" autocomplete="new-password" minlength="8" placeholder="Digite novamente" required>
       </label>
 
-      <button type="submit">Salvar senha e entrar</button>
+      <button id="btnSalvarNovaSenha" type="submit">Salvar senha e entrar</button>
 
       <div id="erroDefinirSenha" class="erro-login escondido"></div>
     </form>
