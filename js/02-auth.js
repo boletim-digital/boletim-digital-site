@@ -99,11 +99,12 @@ function negarAcesso(mensagem = "Você não tem permissão para executar esta a�
   alert(mensagem);
 }
 
-function mostrarMensagemLogin(mensagem = "", visivel = true) {
+function mostrarMensagemLogin(mensagem = "", visivel = true, sucesso = false) {
   const erro = document.getElementById("erroLogin");
   if (!erro) return;
   erro.textContent = mensagem || "Não foi possível realizar o login.";
   erro.classList.toggle("escondido", !visivel);
+  erro.classList.toggle("sucesso", Boolean(visivel && sucesso));
 }
 
 function mostrarLogin() {
@@ -313,22 +314,46 @@ async function definirSenhaDoConvite(event) {
   if (botao) botao.disabled = true;
 
   try {
+    await (window.boletimAuthInicialPromise || Promise.resolve());
+    const { data: dadosSessao, error: erroSessao } = await cliente.auth.getSession();
+    if (erroSessao) throw erroSessao;
+    if (!dadosSessao.session?.user) {
+      throw new Error("AUTH_RECOVERY_SESSION_MISSING");
+    }
+
     const { data, error } = await cliente.auth.updateUser({ password: senha });
     if (error) throw error;
     if (!data.user) throw new Error("O usuário do convite não foi encontrado.");
 
+    const emailAtual = data.user.email || "";
     window.boletimConvitePendente = false;
     window.boletimRetornoAuthTipo = "";
-    history.replaceState({}, document.title, `${window.location.pathname}${window.location.search}`);
-    await carregarPerfilAutenticado(data.user);
-    mostrarApp();
-
-    if (typeof carregarDadosSupabase === "function") await carregarDadosSupabase();
-    try { montarMenu(); } catch {}
-    try { renderizarNotas(); } catch {}
+    window.boletimSessaoRetorno = null;
+    history.replaceState({}, document.title, window.location.pathname);
+    try { await cliente.auth.signOut(); } catch {}
+    limparSessaoLocal();
+    mostrarLogin();
+    const campoEmail = document.getElementById("loginRg");
+    if (campoEmail && emailAtual) campoEmail.value = emailAtual;
+    mostrarMensagemLogin("Senha atualizada com sucesso. Entre com a sua nova senha.", true, true);
+    document.getElementById("loginSenha")?.focus();
     return true;
   } catch (erro) {
-    mostrarMensagemDefinicaoSenha("Não foi possível salvar a senha. Solicite um novo link e tente novamente.");
+    const detalhe = String(erro?.message || erro || "").toLowerCase();
+    if (detalhe.includes("same password")) {
+      mostrarMensagemDefinicaoSenha("A nova senha precisa ser diferente da senha anterior.");
+    } else if (detalhe.includes("password") && (detalhe.includes("weak") || detalhe.includes("characters"))) {
+      mostrarMensagemDefinicaoSenha("Essa senha não atende aos requisitos de segurança. Escolha uma senha mais forte.");
+    } else if (
+      detalhe.includes("session") ||
+      detalhe.includes("expired") ||
+      detalhe.includes("otp") ||
+      detalhe.includes("auth_recovery_session_missing")
+    ) {
+      mostrarMensagemDefinicaoSenha("Este link expirou ou já foi utilizado. Solicite um novo link de recuperação.");
+    } else {
+      mostrarMensagemDefinicaoSenha("Não foi possível salvar a senha agora. Solicite um novo link e tente novamente.");
+    }
     console.error("Falha ao concluir o convite:", erro);
     return false;
   } finally {
@@ -366,6 +391,7 @@ async function inicializarAutenticacaoSupabase() {
 
   inicializacaoAutenticacaoPromise = (async () => {
     await (window.boletimSupabaseReady || Promise.resolve(null));
+    const retornoAuth = await (window.boletimAuthInicialPromise || Promise.resolve(null));
     const cliente = clienteSupabase();
 
     if (!cliente) {
@@ -378,7 +404,7 @@ async function inicializarAutenticacaoSupabase() {
     const { data, error } = await cliente.auth.getSession();
     if (error) throw error;
 
-    const sessao = data.session;
+    const sessao = window.boletimSessaoRetorno || retornoAuth?.sessao || data.session;
     if (!sessao?.user) {
       limparSessaoLocal();
       mostrarLogin();
